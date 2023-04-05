@@ -1,0 +1,35 @@
+<script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="env.json" type="text/javascript"></script>
+<script>
+    $(document).ready(function() {
+        let name_server = window.location.search.substr(1).split('@');
+        let name = decodeURIComponent(name_server[0])
+        let server = decodeURIComponent(name_server[1])
+
+        $.ajax({
+            method: "POST",
+            url: "https://ko.fflogs.com/api/v2/client",
+            contentType: "application/json",
+            headers: {
+                'Authorization': `Bearer ${ACCESS_TOKEN}`, 'Content-Type': 'application/json'
+            },
+            data: JSON.stringify({
+                query: `{
+                    characterData {
+                        character(name: "${name}", serverSlug: "${SERVERS[server]}", serverRegion: "KR") {
+                            zoneRankings(zoneID: 49, difficulty: 101, metric: rdps)
+                        }
+                    }
+                }`
+            }),
+            success : function(data){
+                encounters = data['data']['characterData']['character']['zoneRankings']['rankings']
+                for(i in encounters) {
+                    console.log(ENCOUNTERS[encounters[i]['encounter']['id']]);
+                    console.log(JOBS[encounters[i]['spec']]);
+                    console.log(encounters[i]['rankPercent']);
+                }
+            }
+        })
+    });
+</script>
