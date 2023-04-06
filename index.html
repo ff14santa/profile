@@ -1,35 +1,105 @@
-<script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="env.json" type="text/javascript"></script>
-<script>
-    $(document).ready(function() {
-        let name_server = window.location.search.substr(1).split('@');
-        let name = decodeURIComponent(name_server[0])
-        let server = decodeURIComponent(name_server[1])
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,minimum-scale=1,width=device-width"/>
+        <title>프프로그 카드</title>
+        <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="js/env.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="css/style.css">
+        <script>
+            var encounters;
+            let name_server = window.location.search.substr(1).split('@');
+            let name = decodeURIComponent(name_server[0])
+            let server = decodeURIComponent(name_server[1])
 
-        $.ajax({
-            method: "POST",
-            url: "https://ko.fflogs.com/api/v2/client",
-            contentType: "application/json",
-            headers: {
-                'Authorization': `Bearer ${ACCESS_TOKEN}`, 'Content-Type': 'application/json'
-            },
-            data: JSON.stringify({
-                query: `{
-                    characterData {
-                        character(name: "${name}", serverSlug: "${SERVERS[server]}", serverRegion: "KR") {
-                            zoneRankings(zoneID: 49, difficulty: 101, metric: rdps)
-                        }
+            $(document).ready(function(){
+                $.ajax({
+                    method: "POST",
+                    url: "https://ko.fflogs.com/api/v2/client",
+                    async: false,
+                    contentType: "application/json",
+                    headers: {
+                        'Authorization': `Bearer ${ACCESS_TOKEN}`, 'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify({
+                        query: `{
+                            characterData {
+                                character(name: "${name}", serverSlug: "${SERVERS[server]}", serverRegion: "KR") {
+                                    zoneRankings(zoneID: 49, difficulty: 101, metric: rdps)
+                                }
+                            }
+                        }`
+                    }),
+                    success : function(data){
+                        encounters = data['data']['characterData']['character']['zoneRankings']['rankings']
                     }
-                }`
-            }),
-            success : function(data){
-                encounters = data['data']['characterData']['character']['zoneRankings']['rankings']
-                for(i in encounters) {
-                    console.log(ENCOUNTERS[encounters[i]['encounter']['id']]);
-                    console.log(JOBS[encounters[i]['spec']]);
-                    console.log(encounters[i]['rankPercent']);
-                }
+                })
+            });
+
+            function fillText(ctx, text, x, y, font, fillStyle, textAlign) {
+                ctx.font = font;
+                ctx.fillStyle = fillStyle;
+                ctx.textAlign = textAlign;
+                ctx.fillText(text, x, y);
             }
-        })
-    });
-</script>
+
+            function main() {
+                const canvas = document.getElementById('result');
+                const ctx = canvas.getContext("2d");
+                const img1 = new Image();
+                img1.onload = function(){
+                    ctx.drawImage(img1, 0, 0, img1.width, img1.height, 0, 0, canvas.width, canvas.height);
+                    fillText(ctx, server, 450, 130, "30px 'TTTtangsbudaejjigaeB'", 'red', 'center');
+                    fillText(ctx, name, 450, 190, "60px 'TTTtangsbudaejjigaeB'", 'yellow', 'center');
+                    fillText(ctx, '연옥 영식', 60, 90, "30px 'TTTtangsbudaejjigaeB'", '#777777', 'left');
+                    ctx.textAlign = "center";
+                    for(i in encounters) {
+                        encounter_id = encounters[i]['encounter']['id'];
+                        if (encounter_id == 83) {
+                            fillText(ctx, ENCOUNTERS[encounter_id], 200, 260, "30px 'TTTtangsbudaejjigaeB'", 'green', 'center');
+                            fillText(ctx, JOBS[encounters[i]['spec']] + '  ' + Math.floor(encounters[i]['rankPercent']), 200, 295, "20px 'TTTtangsbudaejjigaeB'", 'white', 'center');
+                        }
+                        else if (encounter_id == 84) {
+                            fillText(ctx, ENCOUNTERS[encounter_id], 450, 260, "30px 'TTTtangsbudaejjigaeB'", 'green', 'center');
+                            fillText(ctx, JOBS[encounters[i]['spec']] + '  ' + Math.floor(encounters[i]['rankPercent']), 450, 295, "20px 'TTTtangsbudaejjigaeB'", 'white', 'center');
+                        }
+                        else if (encounter_id == 85) {
+                            fillText(ctx, ENCOUNTERS[encounter_id], 700, 260, "30px 'TTTtangsbudaejjigaeB'", 'green', 'center');
+                            fillText(ctx, JOBS[encounters[i]['spec']] + '  ' + Math.floor(encounters[i]['rankPercent']), 700, 295, "20px 'TTTtangsbudaejjigaeB'", 'white', 'center');
+                        }
+                        else if (encounter_id == 86) {
+                            fillText(ctx, ENCOUNTERS[encounter_id], 325, 355, "30px 'TTTtangsbudaejjigaeB'", 'green', 'center');
+                            fillText(ctx, JOBS[encounters[i]['spec']] + '  ' + Math.floor(encounters[i]['rankPercent']), 325, 390, "20px 'TTTtangsbudaejjigaeB'", 'white', 'center');
+                        }
+                        else if (encounter_id == 87) {
+                            fillText(ctx, ENCOUNTERS[encounter_id], 575, 355, "30px 'TTTtangsbudaejjigaeB'", 'green', 'center');
+                            fillText(ctx, JOBS[encounters[i]['spec']] + '  ' + Math.floor(encounters[i]['rankPercent']), 575, 390, "20px 'TTTtangsbudaejjigaeB'", 'white', 'center');
+                        }
+                        var today = new Date();
+                        fillText(ctx, today.toLocaleDateString('en-ZA', {timeZone: "Asia/Seoul"}) + ' ' + today.toLocaleTimeString('ko-KR', {hour12: false, hour:'2-digit', minute:'2-digit', timeZone: "Asia/Seoul"}), 845, 432, "17px 'TTTtangsbudaejjigaeB'", '#777777', 'right');
+                    }
+                };
+                img1.src = 'images/image.png';
+            }
+
+            window.onload = function(){
+                main();
+            };
+
+            var fontFaceSet = document.fonts;
+            if (fontFaceSet && fontFaceSet.addEventListener) {
+                fontFaceSet.addEventListener('loadingdone', function () {
+                    main();
+                });
+            } else {
+            // no fallback is possible without this API as a font files download can be triggered
+            // at any time when a new glyph is rendered on screen
+            }
+
+        </script>
+    </head>
+    <body>
+        <canvas id="result" width="900px" height="500px"></canvas>
+    </body>
+</html>
