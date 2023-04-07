@@ -1,6 +1,27 @@
 @font-face {
-    font-family: 'TTTtangsbudaejjigaeB';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2212@1.0/TTTtangsbudaejjigaeB.woff2') format('woff2');
+    font-family: 'PyeongChangPeace-Light';
+    src: url('../fonts/PyeongChangPeace-Light.woff2') format('woff2');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'PyeongChangPeace-Bold';
+    src: url('../fonts/PyeongChangPeace-Bold.woff2') format('woff2');
     font-weight: 700;
     font-style: normal;
+}
+
+html, body {
+    height: 100%;
+}
+
+html {
+    display: table;
+    margin: auto;
+}
+
+body {
+    display: table-cell;
+    vertical-align: middle;
 }

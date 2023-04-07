@@ -2,16 +2,21 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,minimum-scale=1,width=device-width"/>
-        <title>프프로그 카드</title>
+        <meta name="viewport" content="user-scalable=no,width=540"/>
+        <title>프프로그 카드 생성기</title>
         <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
-        <script src="js/env.js" type="text/javascript"></script>
+        <script src="js/env.js"></script>
         <link rel="stylesheet" href="css/style.css">
         <script>
+            var bestPerformanceAverage;
+            var medianPerformanceAverage;
+            var allStarsRank;
+            var allStarsSpec;
+            var latestEncounters = {83:{'x':58.3353, 'y':567.6129}, 84:{'x':158.3353, 'y':567.6129}, 85:{'x':266.3353, 'y':567.6129}, 86:{'x':369.3353, 'y':567.6129}, 87:{'x':466.3353, 'y':567.6129}};
             var encounters;
-            let name_server = window.location.search.substr(1).split('@');
-            let name = decodeURIComponent(name_server[0])
-            let server = decodeURIComponent(name_server[1])
+            var name_server = window.location.search.substr(1).split('@');
+            var name = decodeURIComponent(name_server[0])
+            var server = decodeURIComponent(name_server[1])
 
             $(document).ready(function(){
                 $.ajax({
@@ -32,74 +37,105 @@
                         }`
                     }),
                     success : function(data){
-                        encounters = data['data']['characterData']['character']['zoneRankings']['rankings']
+                        bestPerformanceAverage = Math.ceil(data['data']['characterData']['character']['zoneRankings']['bestPerformanceAverage'] * 10) / 10;
+                        medianPerformanceAverage = Math.ceil(data['data']['characterData']['character']['zoneRankings']['medianPerformanceAverage'] * 10) / 10;
+                        allStarsRank = data['data']['characterData']['character']['zoneRankings']['allStars'][0]['rank'];
+                        allStarsSpec = data['data']['characterData']['character']['zoneRankings']['allStars'][0]['spec'];
+                        encounters = data['data']['characterData']['character']['zoneRankings']['rankings'];
                     }
                 })
             });
 
-            function fillText(ctx, text, x, y, font, fillStyle, textAlign) {
-                ctx.font = font;
-                ctx.fillStyle = fillStyle;
-                ctx.textAlign = textAlign;
-                ctx.fillText(text, x, y);
+            function fillText(ctx, text, x, y, font, textAlign) {
+                if (text != undefined) {
+                    ctx.font = font;
+                    ctx.textAlign = textAlign;
+                    ctx.fillText(text, x, y);
+                }
             }
+
+            var backgroundImg = new Image();
+            backgroundImg.src = 'images/background.png';
+            var allStarSpecImg = new Image();
+            var specImg0 = new Image();
+            var specImg1 = new Image();
+            var specImg2 = new Image();
+            var specImg3 = new Image();
+            var specImg4 = new Image();
+            var specImgList = [specImg0, specImg1, specImg2, specImg3, specImg4];
+            var specImgDict = {};
+            Object.keys(latestEncounters).forEach((key, i) => specImgDict[key] = specImgList[i]);
+            var botIconDict = {};
 
             function main() {
-                const canvas = document.getElementById('result');
-                const ctx = canvas.getContext("2d");
-                const img1 = new Image();
-                img1.onload = function(){
-                    ctx.drawImage(img1, 0, 0, img1.width, img1.height, 0, 0, canvas.width, canvas.height);
-                    fillText(ctx, server, 450, 130, "30px 'TTTtangsbudaejjigaeB'", 'red', 'center');
-                    fillText(ctx, name, 450, 190, "60px 'TTTtangsbudaejjigaeB'", 'yellow', 'center');
-                    fillText(ctx, '연옥 영식', 60, 90, "30px 'TTTtangsbudaejjigaeB'", '#777777', 'left');
-                    ctx.textAlign = "center";
-                    for(i in encounters) {
-                        encounter_id = encounters[i]['encounter']['id'];
-                        if (encounter_id == 83) {
-                            fillText(ctx, ENCOUNTERS[encounter_id], 200, 260, "30px 'TTTtangsbudaejjigaeB'", 'green', 'center');
-                            fillText(ctx, JOBS[encounters[i]['spec']] + '  ' + Math.floor(encounters[i]['rankPercent']), 200, 295, "20px 'TTTtangsbudaejjigaeB'", 'white', 'center');
-                        }
-                        else if (encounter_id == 84) {
-                            fillText(ctx, ENCOUNTERS[encounter_id], 450, 260, "30px 'TTTtangsbudaejjigaeB'", 'green', 'center');
-                            fillText(ctx, JOBS[encounters[i]['spec']] + '  ' + Math.floor(encounters[i]['rankPercent']), 450, 295, "20px 'TTTtangsbudaejjigaeB'", 'white', 'center');
-                        }
-                        else if (encounter_id == 85) {
-                            fillText(ctx, ENCOUNTERS[encounter_id], 700, 260, "30px 'TTTtangsbudaejjigaeB'", 'green', 'center');
-                            fillText(ctx, JOBS[encounters[i]['spec']] + '  ' + Math.floor(encounters[i]['rankPercent']), 700, 295, "20px 'TTTtangsbudaejjigaeB'", 'white', 'center');
-                        }
-                        else if (encounter_id == 86) {
-                            fillText(ctx, ENCOUNTERS[encounter_id], 325, 355, "30px 'TTTtangsbudaejjigaeB'", 'green', 'center');
-                            fillText(ctx, JOBS[encounters[i]['spec']] + '  ' + Math.floor(encounters[i]['rankPercent']), 325, 390, "20px 'TTTtangsbudaejjigaeB'", 'white', 'center');
-                        }
-                        else if (encounter_id == 87) {
-                            fillText(ctx, ENCOUNTERS[encounter_id], 575, 355, "30px 'TTTtangsbudaejjigaeB'", 'green', 'center');
-                            fillText(ctx, JOBS[encounters[i]['spec']] + '  ' + Math.floor(encounters[i]['rankPercent']), 575, 390, "20px 'TTTtangsbudaejjigaeB'", 'white', 'center');
-                        }
-                        var today = new Date();
-                        fillText(ctx, today.toLocaleDateString('en-ZA', {timeZone: "Asia/Seoul"}) + ' ' + today.toLocaleTimeString('ko-KR', {hour12: false, hour:'2-digit', minute:'2-digit', timeZone: "Asia/Seoul"}), 845, 432, "17px 'TTTtangsbudaejjigaeB'", '#777777', 'right');
+                var canvas = document.getElementById('result');
+                var ctx = canvas.getContext("2d");
+                ctx.fillStyle = 'white';
+
+                if(!Object.keys(SERVERS).includes(server)) return
+                allStarSpecImg.onload = function() {
+                    ctx.drawImage(allStarSpecImg, 174.2429, 83, 190.757, 194);
+                }
+                allStarSpecImg.src = 'images/top-icons/' + allStarsSpec + '.png';
+                ctx.drawImage(backgroundImg, 0, 0, backgroundImg.width, backgroundImg.height, 0, 0, canvas.width, canvas.height);
+
+                fillText(ctx, new Date().toLocaleDateString('en-ZA', {timeZone: "Asia/Seoul"}).replaceAll('/', ''), 520.0587, 34.2578, "18px 'PyeongChangPeace-Light'", 'right');
+                fillText(ctx, '파이널판타지14', 18.5386, 34.2578, "18px 'PyeongChangPeace-Light'", 'left');
+                fillText(ctx, 'ff14santa.com/card?' + name + '@' + server, 269.2584, 767.1946, "12px 'PyeongChangPeace-Light'", 'center');
+
+                fillText(ctx, name, 269.7342, 342.0336, "48px 'PyeongChangPeace-Bold'", 'center');
+                fillText(ctx, server + '  |  ' + '판데모니움: 연옥편', 269.7342, 377.0543, "21.79px 'PyeongChangPeace-Light'", 'center');
+
+                fillText(ctx, 'Best Avg', 93.1374, 434.4547, "20px 'PyeongChangPeace-Light'", 'center');
+                fillText(ctx, 'Median Avg', 269.1374, 434.4547, "20px 'PyeongChangPeace-Light'", 'center');
+                fillText(ctx, 'All Star Rank', 447.1374, 434.4547, "20px 'PyeongChangPeace-Light'", 'center');
+
+                fillText(ctx, bestPerformanceAverage, 93.1374, 467.9242, "24px 'PyeongChangPeace-Bold'", 'center');
+                fillText(ctx, medianPerformanceAverage, 269.1374, 467.9242, "24px 'PyeongChangPeace-Bold'", 'center');
+                fillText(ctx, allStarsRank, 447.1374, 467.9242, "24px 'PyeongChangPeace-Bold'", 'center');
+
+                botIconDict = {};
+                for (i in encounters) {
+                    encounter_id = encounters[i]['encounter']['id'];
+                    if (Object.keys(latestEncounters).includes(encounter_id.toString())) {
+                        botIconDict[encounter_id] = 'images/bot-icons/' + encounters[i]['spec'] + '.png';
+                        fillText(ctx, Math.floor(encounters[i]['rankPercent']),latestEncounters[encounter_id]['x'], latestEncounters[encounter_id]['y']+49.9557, "40px 'PyeongChangPeace-Bold'", 'center');
                     }
-                };
-                img1.src = 'images/image.png';
+                }
+                for (i in latestEncounters) {
+                    fillText(ctx, ENCOUNTERS[i], latestEncounters[i]['x'], latestEncounters[i]['y'], "23.79px 'PyeongChangPeace-Light'", 'center');
+                }
+
+                specImg0.onload = function() {
+                    ctx.drawImage(specImg0, latestEncounters[Object.keys(latestEncounters)[0]]['x']-17.17885, latestEncounters[Object.keys(latestEncounters)[0]]['y']+77.05805, 34.3577, 34.3577);
+                }
+                specImg0.src = botIconDict[Object.keys(latestEncounters)[0]];
+                specImg1.onload = function() {
+                    ctx.drawImage(specImg1, latestEncounters[Object.keys(latestEncounters)[1]]['x']-17.17885, latestEncounters[Object.keys(latestEncounters)[1]]['y']+77.05805, 34.3577, 34.3577);
+                }
+                specImg1.src = botIconDict[Object.keys(latestEncounters)[1]]
+                specImg2.onload = function() {
+                    ctx.drawImage(specImg2, latestEncounters[Object.keys(latestEncounters)[2]]['x']-17.17885, latestEncounters[Object.keys(latestEncounters)[2]]['y']+77.05805, 34.3577, 34.3577);
+                }
+                specImg2.src = botIconDict[Object.keys(latestEncounters)[2]];
+                specImg3.onload = function() {
+                    ctx.drawImage(specImg3, latestEncounters[Object.keys(latestEncounters)[3]]['x']-17.17885, latestEncounters[Object.keys(latestEncounters)[3]]['y']+77.05805, 34.3577, 34.3577);
+                }
+                specImg3.src = botIconDict[Object.keys(latestEncounters)[3]];
+                specImg4.onload = function() {
+                    ctx.drawImage(specImg4, latestEncounters[Object.keys(latestEncounters)[4]]['x']-17.17885, latestEncounters[Object.keys(latestEncounters)[4]]['y']+77.05805, 34.3577, 34.3577);
+                }
+                specImg4.src = botIconDict[Object.keys(latestEncounters)[4]];
             }
 
-            window.onload = function(){
+            document.onreadystatechange = function() {
+                if (document.readyState === 'complete')
+                    $(document).trigger('fontfaceapplied');
                 main();
             };
-
-            var fontFaceSet = document.fonts;
-            if (fontFaceSet && fontFaceSet.addEventListener) {
-                fontFaceSet.addEventListener('loadingdone', function () {
-                    main();
-                });
-            } else {
-            // no fallback is possible without this API as a font files download can be triggered
-            // at any time when a new glyph is rendered on screen
-            }
-
         </script>
     </head>
     <body>
-        <canvas id="result" width="900px" height="500px"></canvas>
+        <canvas id="result" width="540px" height="790px"></canvas>
     </body>
 </html>
