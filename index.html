@@ -1,141 +1,112 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="ko">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="user-scalable=no,width=540"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
         <title>프프로그 카드 생성기</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+        <link rel="stylesheet" href="css/style.css">
         <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
         <script src="js/env.js"></script>
-        <link rel="stylesheet" href="css/style.css">
-        <script>
-            var bestPerformanceAverage;
-            var medianPerformanceAverage;
-            var allStarsRank;
-            var allStarsSpec;
-            var latestEncounters = {83:{'x':58.3353, 'y':567.6129}, 84:{'x':158.3353, 'y':567.6129}, 85:{'x':266.3353, 'y':567.6129}, 86:{'x':369.3353, 'y':567.6129}, 87:{'x':466.3353, 'y':567.6129}};
-            var encounters;
-            var name_server = window.location.search.substr(1).split('@');
-            var name = decodeURIComponent(name_server[0])
-            var server = decodeURIComponent(name_server[1])
-
-            $(document).ready(function(){
-                $.ajax({
-                    method: "POST",
-                    url: "https://ko.fflogs.com/api/v2/client",
-                    async: false,
-                    contentType: "application/json",
-                    headers: {
-                        'Authorization': `Bearer ${ACCESS_TOKEN}`, 'Content-Type': 'application/json'
-                    },
-                    data: JSON.stringify({
-                        query: `{
-                            characterData {
-                                character(name: "${name}", serverSlug: "${SERVERS[server]}", serverRegion: "KR") {
-                                    zoneRankings(zoneID: 49, difficulty: 101, metric: rdps)
-                                }
-                            }
-                        }`
-                    }),
-                    success : function(data){
-                        bestPerformanceAverage = Math.ceil(data['data']['characterData']['character']['zoneRankings']['bestPerformanceAverage'] * 10) / 10;
-                        medianPerformanceAverage = Math.ceil(data['data']['characterData']['character']['zoneRankings']['medianPerformanceAverage'] * 10) / 10;
-                        allStarsRank = data['data']['characterData']['character']['zoneRankings']['allStars'][0]['rank'];
-                        allStarsSpec = data['data']['characterData']['character']['zoneRankings']['allStars'][0]['spec'];
-                        encounters = data['data']['characterData']['character']['zoneRankings']['rankings'];
-                    }
-                })
-            });
-
-            function fillText(ctx, text, x, y, font, textAlign) {
-                if (text != undefined) {
-                    ctx.font = font;
-                    ctx.textAlign = textAlign;
-                    ctx.fillText(text, x, y);
-                }
-            }
-
-            var backgroundImg = new Image();
-            backgroundImg.src = 'images/background.png';
-            var allStarSpecImg = new Image();
-            var specImg0 = new Image();
-            var specImg1 = new Image();
-            var specImg2 = new Image();
-            var specImg3 = new Image();
-            var specImg4 = new Image();
-            var specImgList = [specImg0, specImg1, specImg2, specImg3, specImg4];
-            var specImgDict = {};
-            Object.keys(latestEncounters).forEach((key, i) => specImgDict[key] = specImgList[i]);
-            var botIconDict = {};
-
-            function main() {
-                var canvas = document.getElementById('result');
-                var ctx = canvas.getContext("2d");
-                ctx.fillStyle = 'white';
-
-                if(!Object.keys(SERVERS).includes(server)) return
-                allStarSpecImg.onload = function() {
-                    ctx.drawImage(allStarSpecImg, 174.2429, 83, 190.757, 194);
-                }
-                allStarSpecImg.src = 'images/top-icons/' + allStarsSpec + '.png';
-                ctx.drawImage(backgroundImg, 0, 0, backgroundImg.width, backgroundImg.height, 0, 0, canvas.width, canvas.height);
-
-                fillText(ctx, new Date().toLocaleDateString('en-ZA', {timeZone: "Asia/Seoul"}).replaceAll('/', ''), 520.0587, 34.2578, "18px 'PyeongChangPeace-Light'", 'right');
-                fillText(ctx, '파이널판타지14', 18.5386, 34.2578, "18px 'PyeongChangPeace-Light'", 'left');
-                fillText(ctx, 'ff14santa.com/card?' + name + '@' + server, 269.2584, 767.1946, "12px 'PyeongChangPeace-Light'", 'center');
-
-                fillText(ctx, name, 269.7342, 342.0336, "48px 'PyeongChangPeace-Bold'", 'center');
-                fillText(ctx, server + '  |  ' + '판데모니움: 연옥편', 269.7342, 377.0543, "21.79px 'PyeongChangPeace-Light'", 'center');
-
-                fillText(ctx, 'Best Avg', 93.1374, 434.4547, "20px 'PyeongChangPeace-Light'", 'center');
-                fillText(ctx, 'Median Avg', 269.1374, 434.4547, "20px 'PyeongChangPeace-Light'", 'center');
-                fillText(ctx, 'All Star Rank', 447.1374, 434.4547, "20px 'PyeongChangPeace-Light'", 'center');
-
-                fillText(ctx, bestPerformanceAverage, 93.1374, 467.9242, "24px 'PyeongChangPeace-Bold'", 'center');
-                fillText(ctx, medianPerformanceAverage, 269.1374, 467.9242, "24px 'PyeongChangPeace-Bold'", 'center');
-                fillText(ctx, allStarsRank, 447.1374, 467.9242, "24px 'PyeongChangPeace-Bold'", 'center');
-
-                botIconDict = {};
-                for (i in encounters) {
-                    encounter_id = encounters[i]['encounter']['id'];
-                    if (Object.keys(latestEncounters).includes(encounter_id.toString())) {
-                        botIconDict[encounter_id] = 'images/bot-icons/' + encounters[i]['spec'] + '.png';
-                        fillText(ctx, Math.floor(encounters[i]['rankPercent']),latestEncounters[encounter_id]['x'], latestEncounters[encounter_id]['y']+49.9557, "40px 'PyeongChangPeace-Bold'", 'center');
-                    }
-                }
-                for (i in latestEncounters) {
-                    fillText(ctx, ENCOUNTERS[i], latestEncounters[i]['x'], latestEncounters[i]['y'], "23.79px 'PyeongChangPeace-Light'", 'center');
-                }
-
-                specImg0.onload = function() {
-                    ctx.drawImage(specImg0, latestEncounters[Object.keys(latestEncounters)[0]]['x']-17.17885, latestEncounters[Object.keys(latestEncounters)[0]]['y']+77.05805, 34.3577, 34.3577);
-                }
-                specImg0.src = botIconDict[Object.keys(latestEncounters)[0]];
-                specImg1.onload = function() {
-                    ctx.drawImage(specImg1, latestEncounters[Object.keys(latestEncounters)[1]]['x']-17.17885, latestEncounters[Object.keys(latestEncounters)[1]]['y']+77.05805, 34.3577, 34.3577);
-                }
-                specImg1.src = botIconDict[Object.keys(latestEncounters)[1]]
-                specImg2.onload = function() {
-                    ctx.drawImage(specImg2, latestEncounters[Object.keys(latestEncounters)[2]]['x']-17.17885, latestEncounters[Object.keys(latestEncounters)[2]]['y']+77.05805, 34.3577, 34.3577);
-                }
-                specImg2.src = botIconDict[Object.keys(latestEncounters)[2]];
-                specImg3.onload = function() {
-                    ctx.drawImage(specImg3, latestEncounters[Object.keys(latestEncounters)[3]]['x']-17.17885, latestEncounters[Object.keys(latestEncounters)[3]]['y']+77.05805, 34.3577, 34.3577);
-                }
-                specImg3.src = botIconDict[Object.keys(latestEncounters)[3]];
-                specImg4.onload = function() {
-                    ctx.drawImage(specImg4, latestEncounters[Object.keys(latestEncounters)[4]]['x']-17.17885, latestEncounters[Object.keys(latestEncounters)[4]]['y']+77.05805, 34.3577, 34.3577);
-                }
-                specImg4.src = botIconDict[Object.keys(latestEncounters)[4]];
-            }
-
-            document.onreadystatechange = function() {
-                if (document.readyState === 'complete')
-                    $(document).trigger('fontfaceapplied');
-                main();
-            };
-        </script>
+        <script src="js/main.js"></script>
     </head>
-    <body>
-        <canvas id="result" width="540px" height="790px"></canvas>
+    <body class="m-auto">
+        <div class="container text-center mx-auto">
+            <div class="row py-2">
+                <div class="col">
+                    <div class="input-group">
+                        <input type="text" id="Username" class="form-control" placeholder="닉네임" aria-label="Username">
+                        <label class="input-group-text" for="inputGroupSelect01">@</label>
+                        <select class="form-select" id="Server">
+                            <option selected disabled>서버</option>
+                            <option>모그리</option>
+                            <option >초코보</option>
+                            <option>카벙클</option>
+                            <option>톤베리</option>
+                            <option>펜리르</option>
+                        </select>
+                        <button type="button" id="search" class="btn btn-primary" onclick="search();">검색</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row py-2">
+                <div id="jobs" class="col">
+                    <button class="badge d-none align-items-center p-1 pe-2 text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-pill" onclick="getApi();" id="All">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/All.png">전체
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill" onclick="getApi('나이트');" id="Paladin">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/Paladin.png">나이트
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill" onclick="getApi('전사');" id="Warrior">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/Warrior.png">전사
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill" onclick="getApi('암흑기사');" id="DarkKnight">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/DarkKnight.png">암흑기사
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill" onclick="getApi('건브레이커');" id="Gunbreaker">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/Gunbreaker.png">건브레이커
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-success-emphasis bg-success-subtle border border-success-subtle rounded-pill" onclick="getApi('백마도사');" id="WhiteMage">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/WhiteMage.png">백마도사
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-success-emphasis bg-success-subtle border border-success-subtle rounded-pill" onclick="getApi('학자');" id="Scholar">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/Scholar.png">학자
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-success-emphasis bg-success-subtle border border-success-subtle rounded-pill" onclick="getApi('점성술사');" id="Astrologian">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/Astrologian.png">점성술사
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-success-emphasis bg-success-subtle border border-success-subtle rounded-pill" onclick="getApi('현자');" id="Sage">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/Sage.png">현자
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-pill" onclick="getApi('몽크');" id="Monk">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/Monk.png">몽크
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-pill" onclick="getApi('용기사');" id="Dragoon">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/Dragoon.png">용기사
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-pill" onclick="getApi('닌자');" id="Ninja">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/Ninja.png">닌자
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-pill" onclick="getApi('사무라이');" id="Samurai">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/Samurai.png">사무라이
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-pill" onclick="getApi('리퍼');" id="Reaper">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/Reaper.png">리퍼
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-pill" onclick="getApi('음유시인');" id="Bard">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/Bard.png">음유시인
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-pill" onclick="getApi('기공사');" id="Machinist">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/Machinist.png">기공사
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-pill" onclick="getApi('무도가');" id="Dancer">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/Dancer.png">무도가
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-pill" onclick="getApi('흑마도사');" id="BlackMage">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/BlackMage.png">흑마도사
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-pill" onclick="getApi('소환사');" id="Summoner">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/Summoner.png">소환사
+                    </button>
+                    <button class="badge d-none align-items-center p-1 pe-2 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-pill" onclick="getApi('적마도사');" id="RedMage">
+                        <img class="rounded-circle me-1" width="24" height="24" src="images/bot-icons/RedMage.png">적마도사
+                    </button>
+                </div>
+            </div>
+
+            <div class="row py-2">
+                <div id="loading" class="d-flex justify-content-center d-none">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only"></span>
+                    </div>
+                  </div>
+
+                <canvas id="cardCanvas" width="540px" height="790px" style="display: none;"></canvas>
+                <img id="card">
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
     </body>
 </html>

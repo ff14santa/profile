@@ -1,37 +1,37 @@
-ENCOUNTERS =  JSON.parse(JSON.stringify({
+ENCOUNTERS =  {
     83: '1층',
     84: '2층',
     85: '3층',
     86: '4층-1',
     87: '4층-2',
-}));
+};
 
-SERVERS = JSON.parse(JSON.stringify({
+SERVERS = {
     '모그리': 'moogle',
     '초코보': 'chocobo',
     '카벙클': 'carbuncle',
     '톤베리': 'tonberry',
     '펜리르': 'fenrir'
-}));
+};
 
-JOBS = JSON.parse(JSON.stringify({
-    'Astrologian': '점성술사',
-    'Bard': '음유시인',
-    'BlackMage': '흑마도사',
-    'DarkKnight': '암흑기사',
-    'Dragoon': '용기사',
-    'Machinist': '기공사',
-    'Monk': '몽크',
-    'Ninja': '닌자',
-    'Paladin': '나이트',
-    'Scholar': '학자',
-    'Summoner': '소환사',
-    'Warrior': '전사',
-    'WhiteMage': '백마도사',
-    'RedMage': '적마도사',
-    'Samurai': '사무라이',
-    'Dancer': '무도가',
-    'Gunbreaker': '건브레이커',
-    'Reaper': '리퍼',
-    'Sage': '현자'
-}));
+JOBS = {
+    '점성술사': 'Astrologian',
+    '음유시인': 'Bard',
+    '흑마도사': 'BlackMage',
+    '암흑기사': 'DarkKnight',
+    '용기사': 'Dragoon',
+    '기공사': 'Machinist',
+    '몽크': 'Monk',
+    '닌자': 'Ninja',
+    '나이트': 'Paladin',
+    '학자': 'Scholar',
+    '소환사': 'Summoner',
+    '전사': 'Warrior',
+    '백마도사': 'WhiteMage',
+    '적마도사': 'RedMage',
+    '사무라이': 'Samurai',
+    '무도가': 'Dancer',
+    '건브레이커': 'Gunbreaker',
+    '리퍼': 'Reaper',
+    '현자': 'Sage'
+};
