@@ -10,6 +10,7 @@ function capitalizeFirstLetter(string) {
 }
 
 async function search() {
+    document.getElementById("card").classList.add("d-none");
     document.getElementById("card").removeAttribute('src');
     var buttons = document.querySelectorAll('#jobs button');
     var specArray = ["All"];
@@ -64,6 +65,7 @@ async function search() {
 }
 
 function getApi(job) {
+    document.getElementById("card").classList.add("d-none");
     document.getElementById("card").removeAttribute('src');
     if (!name) return;
     if (!Object.keys(SERVERS).includes(server)) return;
@@ -178,6 +180,7 @@ async function createCard(name, server, data) {
             await fillText(ctx, ENCOUNTERS[i], latestEncounters[i]['x'], latestEncounters[i]['y'], "20px 'PyeongChangPeace-Light'", 'center', 'white');
         }
         document.getElementById("card").src = canvas.toDataURL();
+        document.getElementById("card").classList.remove("d-none");
     } finally {
         document.getElementById("loading").classList.add("d-none");
         document.getElementById("search").removeAttribute('disabled');
