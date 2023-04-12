@@ -19,7 +19,7 @@ async function search() {
         buttons[i].classList.add('d-none');
     }
 
-    name = capitalizeFirstLetter(document.getElementById("Username").value.trim());
+    name = capitalizeFirstLetter(document.getElementById("Username").value.trim()).replaceAll("’", "'");
     if (!name) return;
     server = document.getElementById("Server").value.trim();
     if (!Object.keys(SERVERS).includes(server)) return;
