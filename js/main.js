@@ -45,13 +45,15 @@ async function search() {
                 }`
             }),
             success: function(data){
-                var ranks = data['data']['characterData']['character']['encounterRankings']['ranks'];
-                for (i in ranks) {
-                    spec = ranks[i]['spec'];
-                    if (specArray.indexOf(spec) === -1) {
-                        specArray.push(spec);
+                try {
+                    var ranks = data['data']['characterData']['character']['encounterRankings']['ranks'];
+                    for (i in ranks) {
+                        spec = ranks[i]['spec'];
+                        if (specArray.indexOf(spec) === -1) {
+                            specArray.push(spec);
+                        }
                     }
-                }
+                } catch(e) {}
             }
         })
     }
@@ -89,8 +91,6 @@ function getApi(job) {
         }),
         success: function(data){
             createCard(name, server, data);
-            document.getElementById("loading").classList.add("d-none");
-            document.getElementById("search").removeAttribute('disabled');
         }
     })
 }
@@ -130,53 +130,56 @@ async function createCard(name, server, data) {
     ctx.clearRect(0, 0, width, height);
 
     if (!Object.keys(SERVERS).includes(server)) return
-    if (data['data']['characterData']['character']['zoneRankings']['allStars'][0] == undefined) return
+    try {
+        var job = data['data']['characterData']['character']['zoneRankings']['allStars'][0]['spec'];
 
-    var job = data['data']['characterData']['character']['zoneRankings']['allStars'][0]['spec'];
-
-    var specClass;
-    if (['Paladin', 'Warrior', 'DarkKnight', 'Gunbreaker'].includes(job)) {
-        specClass = 'tank';
-    }
-    else if (['WhiteMage', 'Scholar', 'Astrologian', 'Sage'].includes(job)) {
-        specClass = 'healer';
-    }
-    else {
-        specClass = 'dps';
-    }
-
-    backgroundImg = await getImg('images/backgrounds/' + specClass + '.png');
-    ctx.drawImage(backgroundImg, 0, 0, backgroundImg.width, backgroundImg.height, 0, 0, width, height);
-
-    topIcon = await getImg('images/top-icons/' + job + '.png');
-    drawImage(ctx, topIcon, width*0.5, height*0.260, width*0.350, width*0.350);
-
-    encounters = data['data']['characterData']['character']['zoneRankings']['rankings'];
-
-    await fillText(ctx, new Date().toLocaleDateString('en-ZA', {timeZone: "Asia/Seoul"}).replaceAll('/', ''), width-30, 45, "18px 'PyeongChangPeace-Light'", 'right', 'white');
-    await fillText(ctx, '파이널판타지14', 30, 45, "18px 'PyeongChangPeace-Light'", 'left', 'white');
-    await fillText(ctx, 'ff14santa.com/card', width/2, height-34, "14px 'PyeongChangPeace-Light'", 'center', 'white');
-
-    await fillText(ctx, name, width/2, height*0.485, "48px 'PyeongChangPeace-Bold'", 'center', 'white');
-    await fillText(ctx, server + '  |  ' + '판데모니움: 연옥편', width/2, height*0.525, "22px 'PyeongChangPeace-Light'", 'center', 'white');
-
-    await fillText(ctx, 'Best Avg', 20+(width-40)*0.22, height*0.655, "20px 'PyeongChangPeace-Light'", 'center', 'white');
-    await fillText(ctx, 'Median Avg', 20+(width-40)*0.5, height*0.655, "20px 'PyeongChangPeace-Light'", 'center', 'white');
-    await fillText(ctx, 'All Star Rank', 20+(width-40)*0.78, height*0.655, "20px 'PyeongChangPeace-Light'", 'center', 'white');
-
-    await fillText(ctx, Math.ceil(data['data']['characterData']['character']['zoneRankings']['bestPerformanceAverage'] * 10) / 10, 20+(width-40)*0.22, height*0.705, "25px 'PyeongChangPeace-Bold'", 'center', 'white');
-    await fillText(ctx, Math.ceil(data['data']['characterData']['character']['zoneRankings']['medianPerformanceAverage'] * 10) / 10, 20+(width-40)*0.5, height*0.705, "25px 'PyeongChangPeace-Bold'", 'center', 'white');
-    await fillText(ctx, data['data']['characterData']['character']['zoneRankings']['allStars'][0]['rank'], 20+(width-40)*0.78, height*0.705, "25px 'PyeongChangPeace-Bold'", 'center', 'white');
-
-    for (i in encounters) {
-        encounter_id = encounters[i]['encounter']['id'];
-        if (Object.keys(latestEncounters).includes(encounter_id.toString())) {
-            var rankPercent = (encounters[i]['rankPercent'] == null) ? '-' : Math.floor(encounters[i]['rankPercent']);
-            await fillText(ctx, rankPercent,latestEncounters[encounter_id]['x'], latestEncounters[encounter_id]['y']+40, "37px 'PyeongChangPeace-Bold'", 'center', 'white');
+        var specClass;
+        if (['Paladin', 'Warrior', 'DarkKnight', 'Gunbreaker'].includes(job)) {
+            specClass = 'tank';
         }
+        else if (['WhiteMage', 'Scholar', 'Astrologian', 'Sage'].includes(job)) {
+            specClass = 'healer';
+        }
+        else {
+            specClass = 'dps';
+        }
+
+        backgroundImg = await getImg('images/backgrounds/' + specClass + '.png');
+        ctx.drawImage(backgroundImg, 0, 0, backgroundImg.width, backgroundImg.height, 0, 0, width, height);
+
+        topIcon = await getImg('images/top-icons/' + job + '.png');
+        drawImage(ctx, topIcon, width*0.5, height*0.260, width*0.350, width*0.350);
+
+        encounters = data['data']['characterData']['character']['zoneRankings']['rankings'];
+
+        await fillText(ctx, new Date().toLocaleDateString('en-ZA', {timeZone: "Asia/Seoul"}).replaceAll('/', ''), width-30, 45, "18px 'PyeongChangPeace-Light'", 'right', 'white');
+        await fillText(ctx, '파이널판타지14', 30, 45, "18px 'PyeongChangPeace-Light'", 'left', 'white');
+        await fillText(ctx, 'ff14santa.com/card', width/2, height-34, "14px 'PyeongChangPeace-Light'", 'center', 'white');
+
+        await fillText(ctx, name, width/2, height*0.485, "48px 'PyeongChangPeace-Bold'", 'center', 'white');
+        await fillText(ctx, server + '  |  ' + '판데모니움: 연옥편', width/2, height*0.525, "22px 'PyeongChangPeace-Light'", 'center', 'white');
+
+        await fillText(ctx, 'Best Avg', 20+(width-40)*0.22, height*0.655, "20px 'PyeongChangPeace-Light'", 'center', 'white');
+        await fillText(ctx, 'Median Avg', 20+(width-40)*0.5, height*0.655, "20px 'PyeongChangPeace-Light'", 'center', 'white');
+        await fillText(ctx, 'All Star Rank', 20+(width-40)*0.78, height*0.655, "20px 'PyeongChangPeace-Light'", 'center', 'white');
+
+        await fillText(ctx, Math.ceil(data['data']['characterData']['character']['zoneRankings']['bestPerformanceAverage'] * 10) / 10, 20+(width-40)*0.22, height*0.705, "25px 'PyeongChangPeace-Bold'", 'center', 'white');
+        await fillText(ctx, Math.ceil(data['data']['characterData']['character']['zoneRankings']['medianPerformanceAverage'] * 10) / 10, 20+(width-40)*0.5, height*0.705, "25px 'PyeongChangPeace-Bold'", 'center', 'white');
+        await fillText(ctx, data['data']['characterData']['character']['zoneRankings']['allStars'][0]['rank'], 20+(width-40)*0.78, height*0.705, "25px 'PyeongChangPeace-Bold'", 'center', 'white');
+
+        for (i in encounters) {
+            encounter_id = encounters[i]['encounter']['id'];
+            if (Object.keys(latestEncounters).includes(encounter_id.toString())) {
+                var rankPercent = (encounters[i]['rankPercent'] == null) ? '-' : Math.floor(encounters[i]['rankPercent']);
+                await fillText(ctx, rankPercent,latestEncounters[encounter_id]['x'], latestEncounters[encounter_id]['y']+40, "37px 'PyeongChangPeace-Bold'", 'center', 'white');
+            }
+        }
+        for (i in latestEncounters) {
+            await fillText(ctx, ENCOUNTERS[i], latestEncounters[i]['x'], latestEncounters[i]['y'], "22px 'PyeongChangPeace-Light'", 'center', 'white');
+        }
+        document.getElementById("card").src = canvas.toDataURL();
+    } finally {
+        document.getElementById("loading").classList.add("d-none");
+        document.getElementById("search").removeAttribute('disabled');
     }
-    for (i in latestEncounters) {
-        await fillText(ctx, ENCOUNTERS[i], latestEncounters[i]['x'], latestEncounters[i]['y'], "22px 'PyeongChangPeace-Light'", 'center', 'white');
-    }
-    document.getElementById("card").src = canvas.toDataURL();
 }
