@@ -152,30 +152,30 @@ async function createCard(name, server, data) {
 
         encounters = data['data']['characterData']['character']['zoneRankings']['rankings'];
 
-        await fillText(ctx, new Date().toLocaleDateString('en-ZA', {timeZone: "Asia/Seoul"}).replaceAll('/', ''), width-30, 45, "18px 'PyeongChangPeace-Light'", 'right', 'white');
-        await fillText(ctx, '파이널판타지14', 30, 45, "18px 'PyeongChangPeace-Light'", 'left', 'white');
+        await fillText(ctx, new Date().toLocaleDateString('en-ZA', {timeZone: "Asia/Seoul"}).replaceAll('/', ''), width-34, 49, "18px 'PyeongChangPeace-Light'", 'right', 'white');
+        await fillText(ctx, '파이널판타지14', 34, 49, "18px 'PyeongChangPeace-Light'", 'left', 'white');
         await fillText(ctx, 'ff14santa.com/card', width/2, height-34, "14px 'PyeongChangPeace-Light'", 'center', 'white');
 
         await fillText(ctx, name, width/2, height*0.485, "48px 'PyeongChangPeace-Bold'", 'center', 'white');
-        await fillText(ctx, server + '  |  ' + '판데모니움: 연옥편', width/2, height*0.525, "22px 'PyeongChangPeace-Light'", 'center', 'white');
+        await fillText(ctx, server + '  |  ' + '판데모니움: 연옥편', width/2, height*0.545, "22px 'PyeongChangPeace-Light'", 'center', 'white');
 
-        await fillText(ctx, 'Best Avg', 20+(width-40)*0.22, height*0.655, "20px 'PyeongChangPeace-Light'", 'center', 'white');
-        await fillText(ctx, 'Median Avg', 20+(width-40)*0.5, height*0.655, "20px 'PyeongChangPeace-Light'", 'center', 'white');
-        await fillText(ctx, 'All Star Rank', 20+(width-40)*0.78, height*0.655, "20px 'PyeongChangPeace-Light'", 'center', 'white');
+        await fillText(ctx, 'Best Avg', width*0.23, height*0.655, "20px 'PyeongChangPeace-Light'", 'center', 'white');
+        await fillText(ctx, 'Median Avg', width/2, height*0.655, "20px 'PyeongChangPeace-Light'", 'center', 'white');
+        await fillText(ctx, 'All Star Rank', width*0.77, height*0.655, "20px 'PyeongChangPeace-Light'", 'center', 'white');
 
-        await fillText(ctx, Math.ceil(data['data']['characterData']['character']['zoneRankings']['bestPerformanceAverage'] * 10) / 10, 20+(width-40)*0.22, height*0.705, "25px 'PyeongChangPeace-Bold'", 'center', 'white');
-        await fillText(ctx, Math.ceil(data['data']['characterData']['character']['zoneRankings']['medianPerformanceAverage'] * 10) / 10, 20+(width-40)*0.5, height*0.705, "25px 'PyeongChangPeace-Bold'", 'center', 'white');
-        await fillText(ctx, data['data']['characterData']['character']['zoneRankings']['allStars'][0]['rank'], 20+(width-40)*0.78, height*0.705, "25px 'PyeongChangPeace-Bold'", 'center', 'white');
+        await fillText(ctx, Math.ceil(data['data']['characterData']['character']['zoneRankings']['bestPerformanceAverage'] * 10) / 10, width*0.23, height*0.705, "25px 'PyeongChangPeace-Bold'", 'center', 'white');
+        await fillText(ctx, Math.ceil(data['data']['characterData']['character']['zoneRankings']['medianPerformanceAverage'] * 10) / 10, width/2, height*0.705, "25px 'PyeongChangPeace-Bold'", 'center', 'white');
+        await fillText(ctx, data['data']['characterData']['character']['zoneRankings']['allStars'][0]['rank'], width*0.77, height*0.705, "25px 'PyeongChangPeace-Bold'", 'center', 'white');
 
         for (i in encounters) {
             encounter_id = encounters[i]['encounter']['id'];
             if (Object.keys(latestEncounters).includes(encounter_id.toString())) {
                 var rankPercent = (encounters[i]['rankPercent'] == null) ? '-' : Math.floor(encounters[i]['rankPercent']);
-                await fillText(ctx, rankPercent,latestEncounters[encounter_id]['x'], latestEncounters[encounter_id]['y']+40, "37px 'PyeongChangPeace-Bold'", 'center', 'white');
+                await fillText(ctx, rankPercent,latestEncounters[encounter_id]['x'], latestEncounters[encounter_id]['y']+40, "30px 'PyeongChangPeace-Bold'", 'center', 'white');
             }
         }
         for (i in latestEncounters) {
-            await fillText(ctx, ENCOUNTERS[i], latestEncounters[i]['x'], latestEncounters[i]['y'], "22px 'PyeongChangPeace-Light'", 'center', 'white');
+            await fillText(ctx, ENCOUNTERS[i], latestEncounters[i]['x'], latestEncounters[i]['y'], "20px 'PyeongChangPeace-Light'", 'center', 'white');
         }
         document.getElementById("card").src = canvas.toDataURL();
     } finally {
