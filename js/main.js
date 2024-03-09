@@ -86,7 +86,7 @@ function getApi(job) {
             query: `{
                 characterData {
                     character(name: "${name}", serverSlug: "${SERVERS[server]}", serverRegion: "KR") {
-                        zoneRankings(zoneID: 49, difficulty: 101, metric: rdps${specQuery})
+                        zoneRankings(zoneID: 54, difficulty: 101, metric: rdps${specQuery})
                     }
                 }
             }`
