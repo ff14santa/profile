@@ -1,4 +1,4 @@
-var latestEncounters = {83:{'x':110, 'y':642}, 84:{'x':190, 'y':642}, 85:{'x':270, 'y':642}, 86:{'x':350, 'y':642}, 87:{'x':430, 'y':642}};
+var latestEncounters = {88:{'x':110, 'y':642}, 89:{'x':190, 'y':642}, 90:{'x':270, 'y':642}, 91:{'x':350, 'y':642}, 92:{'x':430, 'y':642}};
 const getFont = (font) => document.fonts.load(font);
 // const getFont = (fontList) => Promise.all(fontList.map(font => document.fonts.load(font)))
 
@@ -86,7 +86,7 @@ function getApi(job) {
             query: `{
                 characterData {
                     character(name: "${name}", serverSlug: "${SERVERS[server]}", serverRegion: "KR") {
-                        zoneRankings(zoneID: 49, difficulty: 101, metric: rdps${specQuery})
+                        zoneRankings(zoneID: 54, difficulty: 101, metric: rdps${specQuery})
                     }
                 }
             }`
@@ -159,7 +159,7 @@ async function createCard(name, server, data) {
         await fillText(ctx, 'ff14santa.com/card', width/2, height-34, "14px 'PyeongChangPeace-Light'", 'center', 'white');
 
         await fillText(ctx, name, width/2, height*0.485, "48px 'PyeongChangPeace-Bold'", 'center', 'white');
-        await fillText(ctx, server + '  |  ' + '판데모니움: 연옥편', width/2, height*0.545, "22px 'PyeongChangPeace-Light'", 'center', 'white');
+        await fillText(ctx, server + '  |  ' + '판데모니움: 천옥편', width/2, height*0.545, "22px 'PyeongChangPeace-Light'", 'center', 'white');
 
         await fillText(ctx, 'Best Avg', width*0.23, height*0.655, "20px 'PyeongChangPeace-Light'", 'center', 'white');
         await fillText(ctx, 'Median Avg', width/2, height*0.655, "20px 'PyeongChangPeace-Light'", 'center', 'white');
