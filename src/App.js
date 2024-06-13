@@ -20,7 +20,11 @@ function App() {
           query: `{
               characterData {
                   character(name: "${username}", serverSlug: "${server}", serverRegion: "KR") {
-                      encounterRankings(encounterID: 88, difficulty: 101, metric: rdps)
+                      en88: encounterRankings(encounterID: 88, difficulty: 101, metric: rdps)
+                      en89: encounterRankings(encounterID: 89, difficulty: 101, metric: rdps)
+                      en90: encounterRankings(encounterID: 90, difficulty: 101, metric: rdps)
+                      en91: encounterRankings(encounterID: 91, difficulty: 101, metric: rdps)
+                      en92: encounterRankings(encounterID: 92, difficulty: 101, metric: rdps)
                   }
               }
           }`,
@@ -28,9 +32,7 @@ function App() {
       })
     ).json();
     setSpecs(new Set());
-    json.data.characterData.character.encounterRankings.ranks.map(({ spec }) =>
-      setSpecs((prev) => prev.add(spec))
-    );
+    console.log(json.data.characterData.character);
   };
 
   const onSubmit = (event) => {
