@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "프프로그 카드 생성기",
+  "name": "프프로그 카드 생성기",
   "icons": [
     {
       "src": "favicon.ico",
