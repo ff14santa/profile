@@ -1,54 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getZoneRankings } from "./utils/getAPI";
 
 function App() {
-  const [username, setUsername] = useState("");
-  const [server, setServer] = useState("");
-  const [specs, setSpecs] = useState(new Set());
+  const [name, setName] = useState(""); // 캐릭터 닉네임
+  const [serverSlug, setServerSlug] = useState(""); // 캐릭터 서버
+  const [zoneID, setZoneID] = useState(54); // fflogs zone ID
 
-  const onUsernameChange = (event) => setUsername(event.target.value);
-  const onServerChange = (event) => setServer(event.target.value);
+  const [characterData, setCharacterData] = useState(); // API data
+  const [specs, setSpecs] = useState(new Set()); // 클리어 직업군
 
-  const getSpecs = async () => {
-    const json = await (
-      await fetch("https://ko.fflogs.com/api/v2/client", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_ACCESS_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: `{
-              characterData {
-                  character(name: "${username}", serverSlug: "${server}", serverRegion: "KR") {
-                      en88: encounterRankings(encounterID: 88, difficulty: 101, metric: rdps)
-                      en89: encounterRankings(encounterID: 89, difficulty: 101, metric: rdps)
-                      en90: encounterRankings(encounterID: 90, difficulty: 101, metric: rdps)
-                      en91: encounterRankings(encounterID: 91, difficulty: 101, metric: rdps)
-                      en92: encounterRankings(encounterID: 92, difficulty: 101, metric: rdps)
-                  }
-              }
-          }`,
-        }),
-      })
-    ).json();
-    setSpecs(new Set());
-    console.log(json.data.characterData.character);
-  };
+  const onNameChange = (event) => setName(event.target.value);
+  const onServerSlugChange = (event) => setServerSlug(event.target.value);
 
   const onSubmit = (event) => {
     event.preventDefault();
-    if (username === "" || server === "") {
+    if (name === "" || serverSlug === "") {
       return;
     }
-    getSpecs();
+    getZoneRankings(name, serverSlug, zoneID).then((r) => {
+      setCharacterData(r);
+    });
   };
+
+  useEffect(() => {
+    if (characterData) {
+      setSpecs(new Set());
+      if (characterData.All.allStars.length) {
+        characterData.All.allStars.map(({ spec }) =>
+          setSpecs((prev) => prev.add(spec))
+        );
+      }
+    }
+  }, [characterData]);
 
   return (
     <div>
       <div>
-        <input type="text" placeholder="닉네임" onChange={onUsernameChange} />
+        <input type="text" placeholder="닉네임" onChange={onNameChange} />
         <label>@</label>
-        <select onChange={onServerChange} defaultValue="">
+        <select onChange={onServerSlugChange} defaultValue="">
           <option value="" disabled>
             서버
           </option>
@@ -61,9 +51,9 @@ function App() {
         <button onClick={onSubmit}>검색</button>
       </div>
       <div>
-        {[...specs].map((spec) => (
-          <button>{spec}</button>
-        ))}
+        {specs.size
+          ? ["All", ...specs].map((spec) => <button>{spec}</button>)
+          : null}
       </div>
     </div>
   );
